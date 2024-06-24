@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Event Management</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Event Management</h1>
+    <table id="registrations-table">
+        <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Email Address</th>
+                <th>Event Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="registrations-list"></tbody>
+    </table>
+
+    <script src="https://cdn.jsdelivr.net/npm/socket.io@2.3.0/dist/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('newRegistration', (registration) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+        <td>${registration.fullName}</td>
+        <td>${registration.emailAddress}</td>
+        <td>${registration.eventName}</td>
+        <td>
+          <button class="edit-btn">Edit</button>
+          <button class="delete-btn">Delete</button>
+        </td>
+      `;
+            document.getElementById('registrations-list').appendChild(row);
+        });
+
+        fetch('/api/v1/registrations')
+            .then((res) => res.json())
+            .then((registrations) => {
+                registrations.forEach((registration) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+            <td>${registration.fullName}</td>
+            <td>${registration.emailAddress}</td>
+            <td>${registration.eventName}</td>
+            <td>
+              <button class="edit-btn">Edit</button>
+              <button class="delete-btn">Delete</button>
+            </td>
+          `;
+                    document.getElementById('registrations-list').appendChild(row);
+                });
+            });
+    </script>
+</body>
+
+</html>
